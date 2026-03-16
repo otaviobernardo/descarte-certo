@@ -106,7 +106,7 @@ def mapa_page():
     return FileResponse(str(FRONTEND_DIR / "pages" / "mapa.html"))
 
 
-# APIs
+# Rotas
 
 @app.post("/api/cadastro")
 def cadastrar(nome: str = Form(...), email: str = Form(...), senha: str = Form(...)):
