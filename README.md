@@ -1,4 +1,4 @@
-# Descarte Certo — Versão Simples
+# Descarte Certo
 
 Stack: FastAPI + HTML + CSS + JS (sem frameworks)
 
