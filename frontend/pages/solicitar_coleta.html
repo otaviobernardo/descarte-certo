@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Coleta — Descarte Certo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/home">Descarte Certo</a>
+    <div>
+      <span id="nav-nome"></span>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container" style="max-width:500px;">
+    <div class="card">
+      <h1>Solicitar Coleta</h1>
+      <p class="sub">Informe o endereço e o que será coletado</p>
+
+      <label>Endereço completo</label>
+      <input type="text" id="endereco" placeholder="Rua, número, bairro">
+
+      <label>Descrição dos resíduos</label>
+      <textarea id="descricao" placeholder="Ex: Móveis velhos, eletrônicos, entulho..."></textarea>
+
+      <button class="btn" onclick="solicitar()">Enviar solicitação</button>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <a href="/home" class="btn btn-outline">← Voltar</a>
+  </div>
+
+  <script src="/static/js/utils.js"></script>
+  <script>
+    const usuario = getUsuario();
+    if (usuario) preencherNavbar();
+
+    async function solicitar() {
+      const endereco = document.getElementById('endereco').value.trim();
+      const descricao = document.getElementById('descricao').value.trim();
+      if (!endereco || !descricao) return mostrarMsg('msg', 'Preencha todos os campos.', 'erro');
+
+      const body = new FormData();
+      body.append('usuario_id', usuario.id);
+      body.append('endereco', endereco);
+      body.append('descricao', descricao);
+
+      const res = await fetch('/api/coleta', { method: 'POST', body });
+      const data = await res.json();
+
+      if (!res.ok) return mostrarMsg('msg', 'Erro ao enviar. Tente novamente.', 'erro');
+      mostrarMsg('msg', `Solicitação enviada! Protocolo: ${data.protocolo}`, 'ok');
+      document.getElementById('endereco').value = '';
+      document.getElementById('descricao').value = '';
+    }
+  </script>
+</body>
+</html>

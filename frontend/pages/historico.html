@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico — Descarte Certo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/home">Descarte Certo</a>
+    <div>
+      <span id="nav-nome"></span>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container" style="max-width:500px;">
+    <div class="card">
+      <h1>Meu Histórico</h1>
+      <p class="sub">Suas solicitações de coleta</p>
+      <div id="lista"></div>
+    </div>
+
+    <a href="/home" class="btn btn-outline">← Voltar</a>
+  </div>
+
+  <script src="/static/js/utils.js"></script>
+  <script>
+    const usuario = getUsuario();
+    if (usuario) preencherNavbar();
+
+    async function carregar() {
+      const res = await fetch(`/api/historico/${usuario.id}`);
+      const data = await res.json();
+      const lista = document.getElementById('lista');
+
+      const total = data.solicitacoes.length + data.denuncias.length;
+      if (!total) {
+        lista.innerHTML = '<div class="empty">Nenhum registro ainda.</div>';
+        return;
+      }
+
+      if (data.solicitacoes.length) {
+        lista.innerHTML += `<p style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--texto-suave);margin-bottom:10px;">Coletas</p>`;
+        data.solicitacoes.forEach(s => {
+          lista.innerHTML += itemHTML(s);
+        });
+      }
+
+      if (data.denuncias.length) {
+        lista.innerHTML += `<p style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--texto-suave);margin:16px 0 10px;">Denúncias</p>`;
+        data.denuncias.forEach(s => {
+          lista.innerHTML += itemHTML(s);
+        });
+      }
+    }
+
+    function itemHTML(s) {
+      const data_fmt = new Date(s.criado_em).toLocaleDateString('pt-BR');
+      return `
+        <div class="item-hist">
+          <div class="protocolo">${s.protocolo} · ${data_fmt}</div>
+          <div class="endereco">${s.endereco}</div>
+          <div class="descr">${s.descricao}</div>
+          <span class="badge">${s.status}</span>
+        </div>`;
+    }
+
+    carregar();
+  </script>
+</body>
+</html>

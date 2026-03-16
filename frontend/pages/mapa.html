@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pontos de Descarte — Descarte Certo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    #mapa { height: 320px; border-radius: 8px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/home">Descarte Certo</a>
+    <div>
+      <span id="nav-nome"></span>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container" style="max-width:600px;">
+    <div class="card">
+      <h1 style="font-size:1.1rem; margin-bottom:14px;">Pontos de Descarte — Joinville</h1>
+      <div id="mapa"></div>
+      <div id="lista-pontos"></div>
+    </div>
+
+    <a href="/home" class="btn btn-outline">← Voltar</a>
+  </div>
+
+  <script src="/static/js/utils.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const usuario = getUsuario();
+    if (usuario) preencherNavbar();
+
+    const pontos = [
+      { nome: "Ecoponto Bucarein",     endereco: "R. Henrique Meyer, 50 — Bucarein",        tipos: "Recicláveis, Eletrônicos, Entulho", horario: "Seg–Sáb 7h–17h", lat: -26.2998, lng: -48.8484, cor: "#2d7a4f" },
+      { nome: "Ecoponto Itaum",        endereco: "R. Prefeito Abdon Batista, 2650 — Itaum", tipos: "Recicláveis, Entulho",               horario: "Seg–Sáb 7h–17h", lat: -26.3148, lng: -48.8612, cor: "#2d7a4f" },
+      { nome: "Ecoponto Boa Vista",    endereco: "R. Getúlio Vargas, 2340 — Boa Vista",     tipos: "Recicláveis, Entulho",               horario: "Seg–Sáb 7h–17h", lat: -26.2752, lng: -48.8370, cor: "#2d7a4f" },
+      { nome: "Ecoponto América",      endereco: "R. XV de Novembro, 4598 — América",       tipos: "Eletrônicos",                        horario: "Seg–Sex 8h–17h", lat: -26.2920, lng: -48.8553, cor: "#2980b9" },
+      { nome: "Ecoponto Medicamentos", endereco: "R. Albano Schmidt, 4000 — Boa Vista",     tipos: "Medicamentos",                       horario: "24 horas",        lat: -26.2710, lng: -48.8401, cor: "#c0392b" },
+      { nome: "Ecoponto Comasa",       endereco: "R. Marquês de Olinda, 120 — Comasa",      tipos: "Recicláveis, Eletrônicos, Entulho", horario: "Seg–Sáb 7h–17h", lat: -26.2640, lng: -48.8490, cor: "#2d7a4f" },
+      { nome: "Ecoponto Aventureiro",  endereco: "Av. Santos Dumont — Aventureiro",         tipos: "Óleo",                               horario: "Horário comercial", lat: -26.3044, lng: -48.8457, cor: "#e07b39" },
+    ];
+
+    const mapa = L.map('mapa').setView([-26.2985, -48.8482], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap', maxZoom: 18
+    }).addTo(mapa);
+
+    function criarIcone(cor) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="width:26px;height:26px;background:${cor};border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3);"></div>`,
+        iconSize: [26, 26], iconAnchor: [13, 26], popupAnchor: [0, -26]
+      });
+    }
+
+    const marcadores = [];
+    const lista = document.getElementById('lista-pontos');
+
+    pontos.forEach((p, i) => {
+      const m = L.marker([p.lat, p.lng], { icon: criarIcone(p.cor) })
+        .addTo(mapa)
+        .bindPopup(`<strong>${p.nome}</strong><br>${p.endereco}<br>${p.horario}<br><small>${p.tipos}</small>`);
+      marcadores.push(m);
+
+      const item = document.createElement('div');
+      item.className = 'item-hist';
+      item.style.cursor = 'pointer';
+      item.innerHTML = `
+        <div class="endereco">${p.nome}</div>
+        <div class="descr">${p.endereco} · ${p.horario}</div>
+        <span class="badge">${p.tipos}</span>`;
+      item.addEventListener('click', () => {
+        mapa.setView([p.lat, p.lng], 15);
+        marcadores[i].openPopup();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      lista.appendChild(item);
+    });
+  </script>
+</body>
+</html>

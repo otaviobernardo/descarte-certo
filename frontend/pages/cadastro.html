@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro — Descarte Certo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="container" style="max-width:420px; padding-top:60px;">
+    <div style="text-align:center; margin-bottom:28px;">
+      <div style="font-size:3rem;">♻️</div>
+      <h1 style="font-size:1.5rem; margin-top:8px;">Descarte Certo</h1>
+    </div>
+
+    <div class="card">
+      <h1>Criar conta</h1>
+      <p class="sub">Preencha os dados abaixo</p>
+
+      <label>Nome</label>
+      <input type="text" id="nome" placeholder="Seu nome completo">
+
+      <label>E-mail</label>
+      <input type="email" id="email" placeholder="seu@email.com">
+
+      <label>Senha</label>
+      <input type="password" id="senha" placeholder="Mínimo 6 caracteres">
+
+      <button class="btn" onclick="cadastrar()">Criar conta</button>
+      <div id="msg" class="msg"></div>
+    </div>
+
+    <div class="link-aux">
+      Já tem conta? <a href="/">Entrar</a>
+    </div>
+  </div>
+
+  <script src="/static/js/utils.js"></script>
+  <script>
+    async function cadastrar() {
+      const nome = document.getElementById('nome').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const senha = document.getElementById('senha').value;
+      if (!nome || !email || !senha) return mostrarMsg('msg', 'Preencha todos os campos.', 'erro');
+      if (senha.length < 6) return mostrarMsg('msg', 'Senha deve ter ao menos 6 caracteres.', 'erro');
+
+      const body = new FormData();
+      body.append('nome', nome);
+      body.append('email', email);
+      body.append('senha', senha);
+
+      const res = await fetch('/api/cadastro', { method: 'POST', body });
+      const data = await res.json();
+
+      if (!res.ok) return mostrarMsg('msg', data.detail, 'erro');
+      mostrarMsg('msg', 'Conta criada! Redirecionando...', 'ok');
+      setTimeout(() => window.location.href = '/', 1500);
+    }
+  </script>
+</body>
+</html>

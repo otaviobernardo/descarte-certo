@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — Descarte Certo</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="/home">Descarte Certo</a>
+    <div>
+      <span>Olá, <strong id="nav-nome"></strong></span>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card" style="background: linear-gradient(135deg, var(--verde), var(--verde-claro)); color: white; border: none;">
+      <h1 id="bem-vindo" style="color:white; font-size:1.2rem;">Bem-vindo.</h1>
+      <p style="opacity:.85; margin-top:4px; font-size:.88rem;">O que você precisa fazer hoje?</p>
+    </div>
+
+    <div class="grid-acoes">
+      <a href="/solicitar-coleta" class="acao-card">Solicitar Coleta</a>
+      <a href="/denuncia" class="acao-card">Fazer Denúncia</a>
+      <a href="/historico" class="acao-card">Meu Histórico</a>
+      <a href="/mapa" class="acao-card">Ver Pontos</a>
+    </div>
+
+    <div class="card informativo">
+      <h2>Por que descartar corretamente?</h2>
+      <p>O descarte irregular de resíduos é uma das principais causas de enchentes, contaminação do solo e proliferação de doenças nas cidades. Em Joinville, a Prefeitura mantém ecopontos distribuídos pelos bairros para receber o que não pode ir no lixo comum.</p>
+      <p>Este sistema existe para que o cidadão possa solicitar coletas domiciliares, registrar denúncias de descarte irregular e localizar o ponto de entrega mais próximo — sem burocracia.</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-num">7</span>
+          <span class="info-label">ecopontos ativos em Joinville</span>
+        </div>
+        <div class="info-item">
+          <span class="info-num">24h</span>
+          <span class="info-label">prazo de retorno para coletas solicitadas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/utils.js"></script>
+  <script>
+    const usuario = getUsuario();
+    if (usuario) {
+      preencherNavbar();
+      document.getElementById('bem-vindo').textContent = `Olá, ${usuario.nome.split(' ')[0]}.`;
+    }
+  </script>
+</body>
+</html>
